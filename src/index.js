@@ -7,7 +7,26 @@ app.use(express.json());
 
 // Sample data
 let items = [
-    { id: 1, name: 'Alfre' }, //Obj json
-    { id: 2, name: 'Bob' }, //Obj json
-    { id: 3, name: 'Charlie' }  //Obj json 
+    
 ];
+
+//Get endpoint to retrieve all items
+app.get('/items', (req, res) => {
+    res.json(items);
+});
+
+// Get endpoint to retrieve a single item by ID
+app.get('/items/:id', (req, res) => {
+    const itemId = parseInt(req.params.id);
+    const item = items.find(i => i.id === id);
+
+    if (!item){
+        res.status(404).json({ message: 'Item not found' });
+    }
+    
+    res.json(item);
+});
+
+app.listen(port, () => {
+    console.log('Server is running on http://localhost:${port}');
+});
