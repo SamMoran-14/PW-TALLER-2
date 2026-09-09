@@ -6,34 +6,33 @@ const port = 3000;
 
 app.use(express.json());
 
-// Endpoint del Ejercicio 2: recibe país y salario, devuelve los impuestos
 app.get('/api/ejercicio2/:pais/:salario', (req, res) => {
   try {
-    // 1) Normalizar el país: minúsculas y sin espacios/acentos
+    // Normalizar el país: minúsculas y sin espacios/acentos
     const paisKey = req.params.pais
       .toLowerCase()
       .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quita acentos
       .replace(/\s/g, '');                              // quita espacios
 
-    // 2) Validar el salario (que sea número mayor a cero)
+    // Validar el salario (que sea número mayor a cero)
     const salarioBruto = Number(req.params.salario);
     if (Number.isNaN(salarioBruto) || salarioBruto <= 0) {
       return res.status(400).json({ error: 'El salario debe ser un número mayor a cero' });
     }
 
-    // 3) Validar que el país esté permitido
+    // Validar que el país esté permitido
     const config = PAISES[paisKey];
     if (!config) {
       const permitidos = Object.values(PAISES).map(p => p.nombre).join(', ');
       return res.status(400).json({ error: `El pais no es valido. Paises permitidos: ${permitidos}` });
     }
 
-    // 4) Calcular impuestos
+    // Calcular impuestos
     const iva = salarioBruto * (config.iva / 100);
     const renta = salarioBruto * (config.renta / 100);
     const salarioNeto = salarioBruto - iva - renta;
 
-    // 5) Responder con el JSON en el formato pedido
+    // Responder con el JSON en el formato pedido
     res.json({
       pais: paisKey,
       salarioBruto: salarioBruto,
